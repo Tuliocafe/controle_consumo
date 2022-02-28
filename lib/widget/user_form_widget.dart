@@ -2,7 +2,6 @@ import 'dart:core';
 import 'package:controle_consumo/model/user.dart';
 import 'package:controle_consumo/sheets/user_sheet_cadastro.dart';
 import 'package:controle_consumo/widget/botton_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -37,21 +36,9 @@ class _UserFormWidgetState extends State<UserFormWidget> {
     super.initState();
 
     initUser();
-    // getUsers();
-
     getLoja();
     getFuncionario();
   }
-
-  // Future getUsers() async {
-  //   final cadastroLoja = await UserSheetsCadastro.getAll();
-  //   // final cadastroFuncionario = await UserSheetsCadastro.getAllCadastro();
-  //   setState(() {
-  //
-  //     this.cadastroLoja = cadastroLoja;
-  //     // this.cadastroFuncionario = cadastroFuncionario;
-  //   });
-  // }
 
   Future getLoja() async {
     final cadastroLoja = await UserSheetsCadastro.getByColumn(1);
@@ -327,5 +314,7 @@ class _UserFormWidgetState extends State<UserFormWidget> {
 //     ),
 //   );
 // }
+
+
 
 }
