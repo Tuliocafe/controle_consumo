@@ -4,50 +4,37 @@ import 'package:controle_consumo/screens/modify_sheets_page.dart';
 import 'package:controle_consumo/service/auth_service.dart';
 import 'package:controle_consumo/sheets/user_sheet_cadastro.dart';
 import 'package:controle_consumo/sheets/user_sheets.dart';
+import 'package:controle_consumo/widget/auth_check_widget.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'model/teste.dart';
 
 void main() async {
-
-
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
   await UserSheetsCadastro.initCadastro();
   await UserSheets.init();
 
-//   runApp(
-//     MultiProvider(
-//       providers:[
-//         ChangeNotifierProvider(create: (context) => AuthService()),
-//         // ChangeNotifierProvider(create: (context) => ContaRepository() )
-//       ],
-//       child:MyApp()
-//     ),
-//   );
-// }
-
-runApp(MyApp());
+  runApp(
+    MultiProvider(providers: [
+      ChangeNotifierProvider(create: (context) => AuthService()),
+    ], child: MyApp()),
+  );
 }
-
 
 
 class MyApp extends StatelessWidget {
-
-
-
-
   @override
   Widget build(BuildContext context) => MaterialApp(
-    debugShowCheckedModeBanner: false,
-    title: 'Controle Consumo',
-    theme: ThemeData(primarySwatch: Colors.blue),
-    // home: ModifySheetsPage(),
-    // home: CreateSheetsPage(),
-  home: LoginPage(),
-  );
-
+        debugShowCheckedModeBanner: false,
+        title: 'Controle Consumo',
+        theme: ThemeData(primarySwatch: Colors.blue),
+        // home: ModifySheetsPage(),
+        // home: CreateSheetsPage(),
+        home: AuthCheckWidget(),
+        //   home: LearnFirebase(),
+      );
 }
-

@@ -35,11 +35,14 @@ class UserSheetsCadastro {
     }
   }
 
-  static Future<int> getRowCount() async{
+  static Future<int> getRowCountEmail() async{
     if (_userSheet == null) return 0;
 
-    final lastRow = await _userSheet!.values.lastRow();
-    return lastRow == null ? 0 : int.tryParse(lastRow.first) ?? 0;
+    final lastRow = await _userSheet!.values.lastRow(fromColumn: 3);
+    print(lastRow);
+    // return lastRow == null ? 0 : int.tryParse(lastRow.first) ?? 0;
+  return lastRow == null ? 0 : int.tryParse(lastRow.first) ?? 0;
+
   }
 
 
@@ -72,6 +75,36 @@ static Future<List<String>?> getByColumn(column) async{
 }
 
 
+static Future<List<UserCadastro>> getByemail() async{
+  if (_userSheet == null) return <UserCadastro>[];
+
+  final colunaemail = await _userSheet!.values.map.allRows(fromColumn: 3);
+  return colunaemail == null ? <UserCadastro>[] : colunaemail.map(UserCadastro.fromJson).toList();
 }
+
+  static Future<List<User>> getAllcolumn() async{
+    if (_userSheet == null) return <User>[];
+
+    final users = await _userSheet!.values.map.allRows(fromRow: 2, fromColumn: 2,);
+    return users == null ? <User>[] : users.map(User.fromJson).toList();
+  }
+
+  static Future  insertByEmail(valor,  posicao) async{
+    if (_userSheet == null) return;
+
+    _userSheet!.values.insertValue(valor, column: 3, row: posicao);
+  }
+
+
+
+  static Future insert1(List<Map<String, dynamic>> rowList) async{
+    if (_userSheet == null) return;
+
+    _userSheet!.values.map.appendRows(rowList);
+  }
+
+}
+
+
 
 

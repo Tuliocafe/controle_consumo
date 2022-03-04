@@ -73,28 +73,6 @@ class UserSheets {
 
     _userSheet!.values.map.appendRows(rowList);
   }
-
-    //
-    // static Future initloja() async {
-    //   try {
-    //     final spreadsheet = await _Consumo.spreadsheet(_planilhaId);
-    //     _userSheet = await _getWorkSheet(spreadsheet, title: 'Loja');
-    //
-    //     final firstRow = UserFieldsLoja.getFields();
-    //     _userSheet!.values.insertRow(1, firstRow);
-    //   } catch (e){
-    //     print('Init Error: $e');
-    //   }
-    // }
-    //
-    // static Future<List<UserLoja>> getAllLoja() async{
-    //   if (_userSheet == null) return <UserLoja>[];
-    //
-    //   final users = await _userSheet!.values.map.allRows();
-    //   return users == null ? <UserLoja>[] : users.map(UserLoja.fromJson).toList();
-    // }
-
-
 }
 
 

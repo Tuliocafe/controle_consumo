@@ -1,9 +1,10 @@
+import 'package:controle_consumo/service/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-import '../widget/botton_widget.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+   LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -14,6 +15,7 @@ class _LoginPageState extends State<LoginPage> {
   final email = TextEditingController();
   final password = TextEditingController();
 
+  bool loading = false;
   bool isLogin = true;
   late String titulo;
   late String actionButton;
@@ -21,7 +23,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     setFormAction(true);
   }
@@ -40,6 +41,39 @@ class _LoginPageState extends State<LoginPage> {
       }
     });
   }
+
+  login() async {
+    setState(() => loading = true);
+    try {
+      await context.read<AuthService>().login(email.text, password.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
+  register() async {
+    setState(() => loading = true);
+    try {
+      await context.read<AuthService>().register(email.text, password.text);
+    } on AuthException catch (e) {
+      setState(() => loading = false);
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.message)));
+    }
+  }
+
+  // @override
+  // public void onStart() {
+  //   super.onStart();
+  //   // Check if user is signed in (non-null) and update UI accordingly.
+  //   FirebaseUser currentUser = mAuth.getCurrentUser();
+  //   if(currentUser != null){
+  //     reload();
+  //   }
+  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,11 +132,92 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 Padding(
                   padding: EdgeInsets.all(24),
-                  child: ButtonWidget(
-                    text: actionButton,
-                    onClicked: () {},
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: Size.fromHeight(50),
+                      shape: StadiumBorder(),
+                    ),
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        if (isLogin) {
+                          login();
+                        } else {
+                          register();
+                        }
+                      }
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: (loading)
+                          ? [
+                        const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      ]
+                          : [
+                        const Icon(Icons.check),
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text(
+                            actionButton,
+                            style: TextStyle(fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+
+                //
+                // Padding(
+                //   padding: EdgeInsets.all(24.0),
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       if (formKey.currentState!.validate()) {
+                //         if (isLogin) {
+                //           login();
+                //         } else {
+                //           register();
+                //         }
+                //       }
+                //     },
+                //     child: Row(
+                //       mainAxisAlignment: MainAxisAlignment.center,
+                //       children: (loading)
+                //           ? [
+                //               Padding(
+                //                 padding: EdgeInsets.all(16),
+                //                 child: SizedBox(
+                //                   width: 24,
+                //                   height: 24,
+                //                   child: CircularProgressIndicator(
+                //                     color: Colors.white,
+                //                   ),
+                //                 ),
+                //               )
+                //             ]
+                //           : [
+                //               Icon(Icons.check),
+                //               Padding(
+                //                 padding: EdgeInsets.all(16.0),
+                //                 child: Text(
+                //                   actionButton,
+                //                   style: TextStyle(fontSize: 20),
+                //                 ),
+                //               ),
+                //             ],
+                //     ),
+                //   ),
+                // ),
+                //
+
                 TextButton(
                   onPressed: () => setFormAction(!isLogin),
                   child: Text(toggleButton),
@@ -114,60 +229,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-// Widget build(BuildContext context) {
-//   return Form(
-//       key: formKey,
-//       child: Column(mainAxisSize: MainAxisSize.min, children: [
-//         buildemail(),
-//         const SizedBox(
-//           height: 16,
-//         ),
-//         buildpassword(),
-//         const SizedBox(
-//           height: 16,
-//         ),
-//         // builPessoa(),
-//         // const SizedBox(
-//         //   height: 16,
-//         // ),
-//
-//         // buildlogin(),
-//         // const SizedBox(
-//         //   height: 16,
-//         // ),
-//       ]));
-// }
-
-// Widget buildemail() => TextFormField(
-//       controller: email,
-//       decoration: InputDecoration(
-//         border: OutlineInputBorder(),
-//         labelText: 'E-mail',
-//       ),
-//       keyboardType: TextInputType.emailAddress,
-//       validator: (value) {
-//         if (value!.isEmpty) {
-//           return 'E-mail invalido. Favor digitar e-mail valido.';
-//         }
-//         return null;
-//       },
-//     );
-//
-// Widget buildpassword() => TextFormField(
-//       controller: password,
-//       obscureText: true,
-//       decoration: InputDecoration(
-//         border: OutlineInputBorder(),
-//         labelText: 'Senha',
-//       ),
-//       validator: (value) {
-//         if (value!.isEmpty) {
-//           return 'Digite sua senha.';
-//         } else if (value.length < 6) {
-//           return 'Senha deve ter mais de 6 digitos.';
-//         }
-//         return null;
-//       },
-//     );
 }

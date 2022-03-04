@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:controle_consumo/sheets/user_sheet_cadastro.dart';
 import 'package:controle_consumo/sheets/user_sheets.dart';
 import 'package:controle_consumo/widget/user_form_widget.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +19,25 @@ class CreateSheetsPage extends StatelessWidget {
           padding: EdgeInsets.all(32),
           child: SingleChildScrollView(
             child: UserFormWidget(
-              onSavedUser: (user) async {
+
+              // onSevedCadastro: (user) async {
+              //
+              //   await UserSheetsCadastro.getRowCountEmail() + 1;
+              //   final newUser = user.copy();
+              //
+              //   await UserSheetsCadastro.insert([newUser.toJson()]);
+              // },
+              onSavedUser: (user) async{
+
                 final id = await UserSheets.getRowCount() + 1;
-                final newUser = user.copy(id: id);
+
+                final newUser = user.copy(id:id);
 
                 await UserSheets.insert([newUser.toJson()]);
-              },
+
+            },
+
+
             ),
           ),
         ),

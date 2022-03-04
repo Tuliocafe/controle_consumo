@@ -32,6 +32,8 @@ dependencies:
   firebase_core: ^1.13.1
   firebase_auth: ^3.3.9
   firebase_analytics: ^9.1.2
+  provider: ^6.0.2
+  http: ^0.13.4
 
   flutter:
     sdk: flutter
