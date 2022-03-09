@@ -1,5 +1,4 @@
 import 'package:controle_consumo/model/user.dart';
-import 'package:controle_consumo/model/user_cadastro.dart';
 import 'package:gsheets/gsheets.dart';
 
 class UserSheets {
@@ -19,7 +18,8 @@ class UserSheets {
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/controleconsumo%40controleconsumo.iam.gserviceaccount.com"
 }
 ''';
-  static final _planilhaId = '1SitJZR9Rnh7NNvMLQuBlcwwuQv-117sQoSivLvSBDcM';
+    //removi essa informação
+  static final _planilhaId = '???';
   static final _Consumo = GSheets(_credentials);
   static Worksheet? _userSheet;
 
@@ -65,7 +65,13 @@ class UserSheets {
   }
 
 
+    static Future<List<String>?> getAllcolumn() async{
+    //Preciso melhorar isso, fiz para tentar entender.
+    // estou usando uma lista ao invez do map
 
+      final users = await _userSheet!.values.lastRow();
+      return users;
+    }
 
 
   static Future insert(List<Map<String, dynamic>> rowList) async{
@@ -76,3 +82,11 @@ class UserSheets {
 }
 
 
+
+
+// static Future<List<User>> getAllcolumn() async{
+// if (_userSheet == null) return <User>[];
+//
+// final users = await _userSheet!.values.map.allColumns();
+// return users == null ? <User>[] : users.map(User.fromJson).toList();
+// }

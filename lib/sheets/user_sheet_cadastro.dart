@@ -1,9 +1,9 @@
-import 'package:controle_consumo/model/user.dart';
 import 'package:controle_consumo/model/user_cadastro.dart';
 import 'package:gsheets/gsheets.dart';
 
 class UserSheetsCadastro {
-
+// Estudo como manter a mesma UserSheets ?
+// Já sei fazer mas estou sem tempo de ajustar.
 
   static const _credentials = r'''
   {
@@ -19,7 +19,8 @@ class UserSheetsCadastro {
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/controleconsumo%40controleconsumo.iam.gserviceaccount.com"
 }
 ''';
-  static final _planilhaId = '1SitJZR9Rnh7NNvMLQuBlcwwuQv-117sQoSivLvSBDcM';
+  //removi essa informação
+  static final _planilhaId = '???';
   static final _Consumo = GSheets(_credentials);
   static Worksheet? _userSheet;
 
@@ -82,26 +83,15 @@ static Future<List<UserCadastro>> getByemail() async{
   return colunaemail == null ? <UserCadastro>[] : colunaemail.map(UserCadastro.fromJson).toList();
 }
 
-  static Future<List<User>> getAllcolumn() async{
-    if (_userSheet == null) return <User>[];
 
-    final users = await _userSheet!.values.map.allRows(fromRow: 2, fromColumn: 2,);
-    return users == null ? <User>[] : users.map(User.fromJson).toList();
-  }
 
-  static Future  insertByEmail(valor,  posicao) async{
+
+  static Future  insertByEmail(value,  row) async{
     if (_userSheet == null) return;
 
-    _userSheet!.values.insertValue(valor, column: 3, row: posicao);
+    _userSheet!.values.insertValue(value, column: 3, row: row);
   }
 
-
-
-  static Future insert1(List<Map<String, dynamic>> rowList) async{
-    if (_userSheet == null) return;
-
-    _userSheet!.values.map.appendRows(rowList);
-  }
 
 }
 

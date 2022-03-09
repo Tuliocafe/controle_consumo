@@ -6,11 +6,12 @@ class AuthException implements Exception {
   AuthException(this.message);
 }
 
-class AuthService extends ChangeNotifier  {
+class AuthService extends ChangeNotifier {
   FirebaseAuth _auth = FirebaseAuth.instance;
   User? usuario;
   bool isLoading = true;
   bool isValid = false;
+
 
   AuthService() {
     _authCheck();
@@ -30,10 +31,70 @@ class AuthService extends ChangeNotifier  {
     notifyListeners();
   }
 
-  _authValidation(){
+  // Future getemail() async{
+  //   final listemail = await UserSheetsCadastro.getByemail();
+  //
+  //   this.listemail = listemail;
+  // }
+  //
+  // void insertemail(value, row) async {
+  //
+  //   await UserSheetsCadastro.insertByEmail(value, row);
+  // }
+  //
+  //
+  // emailvalidation(emailautentiado) {
+  //   ativo = false;
+  //   for (int i = 0; i < listemail.length; i++) {
+  //     if ((emailautentiado) == listemail[i].email) {
+  //       if (listemail[i].ativo == 'sim') {
+  //         print('agora deu');
+  //         ativo = true;
+  //       }else{
+  //         print('Tem que aguardar vc ser registado');
+  //       }
+  //     }
+  //
+  //     }
+  //   if (!ativo) {
+  //     criatemail();
+  //   }
+  //   notifyListeners();
+  //   }
+  //
+  // criatemail() {
+  //   if (!ativo) {
+  //     getemail();
+  //     insertemail(_auth.currentUser, listemail.length + 2);
+  //   }
+  // }
 
-    notifyListeners();
-  }
+  // Future getemail() async {
+  //   final listemail = await UserSheetsCadastro.getByemail();
+  //
+  //   setState(() {
+  //     this.listemail = listemail;
+  //   });
+  // }
+
+
+  // _emailvalidation(BuildContext context) {
+  //   emailexiste = false;
+  //   ativo = false;
+  //   for (int i = 0; i < listemail.length; i++) {
+  //     // print(listemail[i].email);
+  //     if ((context.read<AuthService>().usuario
+  //         ?.email) == listemail[i].email) {
+  //       emailexiste = true;
+  //       if (listemail[i].ativo == 'sim') {
+  //         ativo = true;
+  //         print('agora deu');
+  //         return true;
+  //       }
+  //     }
+  //   }
+  // }
+
 
   register(String email, String password) async {
     try {
@@ -50,6 +111,7 @@ class AuthService extends ChangeNotifier  {
   }
 
   login(String email, String password) async {
+    //Ainda vou ajustar a questao de Exceptions
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
       _getUser();

@@ -1,13 +1,16 @@
 import 'dart:core';
 
 import 'package:controle_consumo/model/user.dart';
+import 'package:controle_consumo/screens/email_Validation.dart';
+import 'package:controle_consumo/service/auth_service.dart';
 import 'package:controle_consumo/sheets/user_sheet_cadastro.dart';
+import 'package:controle_consumo/sheets/user_sheets.dart';
 import 'package:controle_consumo/widget/botton_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:controle_consumo/service/auth_service.dart';
 import 'package:provider/provider.dart';
 import '../model/user_cadastro.dart';
+import '../service/email_autorization.dart';
 
 class UserFormWidget extends StatefulWidget {
   final User? user;
@@ -15,6 +18,7 @@ class UserFormWidget extends StatefulWidget {
   final ValueChanged<UserCadastro>? onSevedCadastro;
   final bool isUser;
 
+  final EmailAutorization? TesteEmailvalido;
 
   const UserFormWidget({
     Key? key,
@@ -22,7 +26,7 @@ class UserFormWidget extends StatefulWidget {
     required this.onSavedUser,
     this.onSevedCadastro,
     this.isUser = true,
-
+    this.TesteEmailvalido,
   }) : super(key: key);
 
   @override
@@ -30,15 +34,14 @@ class UserFormWidget extends StatefulWidget {
 }
 
 class _UserFormWidgetState extends State<UserFormWidget> {
-  late final int numero;
+  bool ativo = false;
   DateTime datenow = DateTime.now();
   List<String>? cadastroLoja = [];
   List<String>? cadastroFuncionario = [];
-  List teste = [];
-  List<UserCadastro> teste1 = [];
+  List<UserCadastro> listaemail = [];
+  List<String> listalancada = [];
   String? lojaSelecionada;
   String? funcionarioSelecionado;
-  final listinha = ['teste1'];
 
   final formkey = GlobalKey<FormState>();
   late TextEditingController controllerPessoa;
@@ -52,7 +55,7 @@ class _UserFormWidgetState extends State<UserFormWidget> {
     initUser();
     getLoja();
     getFuncionario();
-    getemail();
+    getcolumn();
   }
 
   Future getLoja() async {
@@ -72,10 +75,18 @@ class _UserFormWidgetState extends State<UserFormWidget> {
   }
 
   Future getemail() async {
-    final teste1 = await UserSheetsCadastro.getByemail();
+    final listaemail = await UserSheetsCadastro.getByemail();
 
     setState(() {
-      this.teste1 = teste1;
+      this.listaemail = listaemail;
+    });
+  }
+
+  Future getcolumn() async {
+    final listalancada = await UserSheets.getAllcolumn();
+
+    setState(() {
+      this.listalancada = listalancada!;
     });
   }
 
@@ -87,15 +98,13 @@ class _UserFormWidgetState extends State<UserFormWidget> {
     // getUsers();
     getLoja();
     getFuncionario();
-    getemail();
+    getcolumn();
   }
 
   void insertemail(value, row) async {
-
     await UserSheetsCadastro.insertByEmail(value, row);
   }
-  
-  
+
   void initUser() {
     final pessoa = widget.user == null ? '' : widget.user!.pessoa;
     final item = widget.user == null ? '' : widget.user!.item;
@@ -114,6 +123,7 @@ class _UserFormWidgetState extends State<UserFormWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // AuthService auth = Provider.of<AuthService>(context);
     return Form(
         key: formkey,
         child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -172,25 +182,41 @@ class _UserFormWidgetState extends State<UserFormWidget> {
     String dataptbr = DateFormat("dd/MM/yyyy").format(datenow);
     return ButtonWidget(
       text: 'Salvar',
-      onClicked: () {
-        final form = formkey.currentState!;
-        final isValid = form.validate();
-        if (isValid) {
-          // final usercadastro = UserCadastro(
-          //   email: context.read<AuthService>().usuario?.email,
-          // );
-          // widget.onSevedCadastro!(usercadastro);
-          final user = User(
-            pessoa: funcionarioSelecionado,
-            item: controllerItem.text,
-            valor: controllerValor.text,
-            data: dataptbr,
-            loja: lojaSelecionada,
-          );
-          widget.onSavedUser(user);
-          controllerPessoa.clear();
-          controllerItem.clear();
-          controllerValor.clear();
+      onClicked: () async {
+        await getemail();
+        setState(() {
+          listaemail = listaemail;
+        });
+        EmailAutorization validar = EmailAutorization(ativo);
+
+        await validar.emailvalidation(context, listaemail);
+        // print('logico que deu merda');
+        // print(validar.ativo);
+
+        if (validar.ativo) {
+          final form = formkey.currentState!;
+          final isValid = form.validate();
+          if (isValid) {
+            // final usercadastro = UserCadastro(
+            //   email: context.read<AuthService>().usuario?.email,
+            // );
+            // widget.onSevedCadastro!(usercadastro);
+            final user = User(
+              pessoa: funcionarioSelecionado,
+              item: controllerItem.text,
+              valor: controllerValor.text,
+              data: dataptbr,
+              loja: lojaSelecionada,
+            );
+            widget.onSavedUser(user);
+            controllerPessoa.clear();
+            controllerItem.clear();
+            controllerValor.clear();
+          }
+        } else if (!validar.ativo) {
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => EmailValidation()),
+              (route) => false);
         }
       },
     );
@@ -198,42 +224,65 @@ class _UserFormWidgetState extends State<UserFormWidget> {
 
   Widget buildtexte() {
     return ButtonWidget(
-        text: 'Teste',
-        onClicked: () async{
-           // final id =  await UserSheetsCadastro.getRowCountEmail();
-  final teste = 'testeunitario';
-           await getemail();
-          // print();
-           bool emailexiste = false;
-          print(teste1.length);
-          for (int i = 0; i < teste1.length; i++) {
-            // print(teste1[i].ativo);
-            print(teste1[i].email);
-            if (context.read<AuthService>().usuario?.email == teste1[i].email) {
-              emailexiste = true;
-              if (teste1[i].ativo == 'sim') {
-                print('Liberado para uso');
-              } else
-                print('nao liberado');
-            }
-          }
-          // insertemail(teste, teste1.length +2);
-
-
-          if (emailexiste)
-            print(emailexiste);
-            else {
-            await getemail();
-            insertemail(context.read<AuthService>().usuario?.email,teste1.length +2);
-            print('nao existe');
-            print(emailexiste);
-
-          }
+      // botao criado para testes.
+      // testando um retorno da planilha.
+        text: 'Sair',
+        onClicked: () async {
+          await getcolumn();
+          setState(() {
+            //Estudo, melhorar o State
+            // Sei como ajustar colocar essa informação na initState ou em outro estagio.
+            listalancada = listalancada;
+          });
+          print(
+              'Cadastrado Funcionario ${listalancada[3]} Item ${listalancada[5]} valor R\$${listalancada[6]}');
+          // final id =  await UserSheetsCadastro.getRowCountEmail();
+          //  await getemail();
+          // // print();
+          //  bool emailexiste = false;
+          // print(teste1.length);
+          // for (int i = 0; i < teste1.length; i++) {
+          //   // print(teste1[i].ativo);
+          //   print(teste1[i].email);
+          //   if (context.read<AuthService>().usuario?.email == teste1[i].email) {
+          //     emailexiste = true;
+          //     if (teste1[i].ativo == 'sim') {
+          //       print('Liberado para uso');
+          //     } else
+          //       print('nao liberado');
+          //   }
+          // }
+          // // insertemail(teste, teste1.length +2);
+          //
+          //
+          // if (emailexiste)
+          //   print(emailexiste);
+          //   else {
+          //   await getemail();
+          //   insertemail(context.read<AuthService>().usuario?.email,teste1.length +2);
+          //   print('nao existe');
+          //   print(emailexiste);
+          //
+          // }
 
           // print('nao: $teste1');
 
-          // getemail();
+          // print(EmailValidation.emailvalidation());
+          // validar.emailvalidation(context);
+          // print('bora fazer isso');
+          // print(listaemail[5].email);
+          // await validar.emailteste(context, listaemail);
+          // await getemail();
+          // setState(() {
+          //   listaemail = listaemail;
+          // });
+          // EmailAutorization validar = EmailAutorization(ativo);
           //
+          // await validar.emailvalidation(context, listaemail);
+          // print('logico que deu merda');
+          // print(validar.ativo);
+          // _emailvalidation joao = EmailValidationState123(ativo);
+          // print(joao.ativo);
           // context.read<AuthService>().logout();
           // print(context.read<AuthService>().usuario?.email);
         });
@@ -329,8 +378,6 @@ class _UserFormWidgetState extends State<UserFormWidget> {
       ),
     );
   }
-
-
 
 // Widget buildFuncionario() {
 //   return Container(

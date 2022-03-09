@@ -78,6 +78,9 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.red,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.only(top: 100),
@@ -134,6 +137,7 @@ class _LoginPageState extends State<LoginPage> {
                   padding: EdgeInsets.all(24),
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      primary: Colors.red,
                       minimumSize: Size.fromHeight(50),
                       shape: StadiumBorder(),
                     ),

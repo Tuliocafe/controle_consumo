@@ -1,3 +1,5 @@
+
+
 class UserFieldsCadastro {
   // static final String id = 'id';
   static const String loja = 'loja';
