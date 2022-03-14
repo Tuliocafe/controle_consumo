@@ -2,13 +2,25 @@ import 'dart:core';
 import 'package:controle_consumo/model/user.dart';
 import 'package:controle_consumo/sheets/user_sheet_cadastro.dart';
 import 'package:controle_consumo/widget/botton_widget.dart';
+<<<<<<< Updated upstream
 import 'package:flutter/cupertino.dart';
+=======
+import 'package:flutter/foundation.dart';
+>>>>>>> Stashed changes
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class UserFormWidget extends StatefulWidget {
   final User? user;
+<<<<<<< Updated upstream
   final ValueChanged<User> onSavedUser;
+=======
+  final AsyncValueSetter<User> onSavedUser;
+  final ValueChanged<UserCadastro>? onSevedCadastro;
+  final bool isUser;
+
+  final EmailAutorization? TesteEmailvalido;
+>>>>>>> Stashed changes
 
   const UserFormWidget({
     Key? key,
@@ -28,7 +40,8 @@ class _UserFormWidgetState extends State<UserFormWidget> {
   String? funcionarioSelecionado;
 
   final formkey = GlobalKey<FormState>();
-  late TextEditingController controllerPessoa;
+
+  // late TextEditingController controllerPessoa;
   late TextEditingController controllerItem;
   late TextEditingController controllerValor;
 
@@ -80,18 +93,19 @@ class _UserFormWidgetState extends State<UserFormWidget> {
   }
 
   void initUser() {
-    final pessoa = widget.user == null ? '' : widget.user!.pessoa;
+    // final pessoa = widget.user == null ? '' : widget.user!.pessoa;
     final item = widget.user == null ? '' : widget.user!.item;
     final valor = widget.user == null ? '' : widget.user!.valor;
 
     setState(() {
-      controllerPessoa = TextEditingController(text: pessoa);
+      // controllerPessoa = TextEditingController(text: pessoa);
       controllerItem = TextEditingController(text: item);
       controllerValor = TextEditingController(text: valor);
       cadastroFuncionario = cadastroFuncionario;
       datenow = datenow;
       lojaSelecionada = lojaSelecionada;
       funcionarioSelecionado = funcionarioSelecionado;
+      listaemail = listaemail;
     });
   }
 
@@ -108,10 +122,6 @@ class _UserFormWidgetState extends State<UserFormWidget> {
           const SizedBox(
             height: 16,
           ),
-          // builPessoa(),
-          // const SizedBox(
-          //   height: 16,
-          // ),
           buildItem(),
           const SizedBox(
             height: 16,
@@ -147,6 +157,8 @@ class _UserFormWidgetState extends State<UserFormWidget> {
           labelText: 'Produto',
           border: OutlineInputBorder(),
         ),
+        validator: (value) =>
+            value != null && value.isEmpty ? 'Digite Item' : null,
         // validator: (value) =>
         // value != null && !value.contains('@') ? 'Digite E-mail' : null,
       );
@@ -155,6 +167,7 @@ class _UserFormWidgetState extends State<UserFormWidget> {
     String dataptbr = DateFormat("dd/MM/yyyy").format(datenow);
     return ButtonWidget(
       text: 'Salvar',
+<<<<<<< Updated upstream
       onClicked: () {
         final form = formkey.currentState!;
         final isValid = form.validate();
@@ -170,6 +183,61 @@ class _UserFormWidgetState extends State<UserFormWidget> {
           controllerPessoa.clear();
           controllerItem.clear();
           controllerValor.clear();
+=======
+      onClicked: () async {
+        try {
+          await getemail();
+          setState(() {
+            listaemail = listaemail;
+          });
+          EmailAutorization validar = EmailAutorization(ativo);
+          await validar.emailvalidation(context, listaemail);
+          // print('logico que deu merda');
+          // print(validar.ativo);
+          if (validar.ativo) {
+            final form = formkey.currentState!;
+            final isValid = form.validate();
+            if (isValid) {
+              final user = User(
+                pessoa: funcionarioSelecionado,
+                responsavel: context
+                    .read<AuthService>()
+                    .usuario
+                    ?.email,
+                item: controllerItem.text,
+                valor: controllerValor.text,
+                data: dataptbr,
+                loja: lojaSelecionada,
+              );
+              controllerItem.clear();
+              controllerValor.clear();
+              await widget.onSavedUser(user);
+
+              final snackBar = SnackBar(
+                content: Text('Cadastrado com SUCESSO'),
+                action: SnackBarAction(
+                  label: 'Recolher',
+                  onPressed: () {},
+                ),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
+          } else if (!validar.ativo) {
+            Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => EmailValidation()),
+                (route) => false);
+          }
+        } catch (e) {
+          final snackBar = SnackBar(
+            content: const Text(
+                'Erro, nao foi possivel salvar na planilha, tente novamente mais tarde.'),
+            action: SnackBarAction(
+              label: 'Recolher',
+              onPressed: () {},
+            ),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+>>>>>>> Stashed changes
         }
       },
     );
@@ -177,10 +245,60 @@ class _UserFormWidgetState extends State<UserFormWidget> {
 
   Widget buildtexte() {
     return ButtonWidget(
+<<<<<<< Updated upstream
         text: 'Teste',
         onClicked: () {
           // for (int i = 0; i <= 6; i++) {
           //   print(teste[i].loja);
+=======
+        // botao criado para testes.
+        // testando um retorno da planilha.
+        text: 'Consultar ultimo Lancamento',
+        onClicked: () async {
+          final snackBar = SnackBar(
+            content: Text(
+                '${listalancada[3]}  ${listalancada[5]} R\$${listalancada[6]}'),
+            action: SnackBarAction(
+              label: 'Recolher',
+              onPressed: () {},
+            ),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          // await getcolumn();
+          // setState(() {
+          //   //Estudo, melhorar o State
+          //   // Sei como ajustar colocar essa informação na initState ou em outro estagio.
+          //   listalancada = listalancada;
+          // });
+          // print(
+          //     'Cadastrado Funcionario ${listalancada[3]} Item ${listalancada[5]} valor R\$${listalancada[6]}');
+          // final id =  await UserSheetsCadastro.getRowCountEmail();
+          //  await getemail();
+          // // print();
+          //  bool emailexiste = false;
+          // print(teste1.length);
+          // for (int i = 0; i < teste1.length; i++) {
+          //   // print(teste1[i].ativo);
+          //   print(teste1[i].email);
+          //   if (context.read<AuthService>().usuario?.email == teste1[i].email) {
+          //     emailexiste = true;
+          //     if (teste1[i].ativo == 'sim') {
+          //       print('Liberado para uso');
+          //     } else
+          //       print('nao liberado');
+          //   }
+          // }
+          // // insertemail(teste, teste1.length +2);
+          //
+          //
+          // if (emailexiste)
+          //   print(emailexiste);
+          //   else {
+          //   await getemail();
+          //   insertemail(context.read<AuthService>().usuario?.email,teste1.length +2);
+          //   print('nao existe');
+          //   print(emailexiste);
+>>>>>>> Stashed changes
           //
           // }
           // print(userCadastroJson[0].loja);
@@ -199,7 +317,7 @@ class _UserFormWidgetState extends State<UserFormWidget> {
   Widget buildValor() => TextFormField(
         keyboardType: TextInputType.number,
         controller: controllerValor,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           labelText: 'Valor',
           border: OutlineInputBorder(),
         ),
@@ -281,51 +399,4 @@ class _UserFormWidgetState extends State<UserFormWidget> {
       ),
     );
   }
-
-// Widget buildFuncionario() {
-//   return Container(
-//     decoration: BoxDecoration(
-//       // color: Colors.green.shade600,
-//       // borderRadius: BorderRadius.circular(8),
-//         border: Border.all(color: Colors.grey)),
-//     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//     child: Row(
-//       children: <Widget>[
-//         DropdownButton<String>(
-//           hint: Text(
-//             'Selecione a Funcionario',
-//             style: TextStyle(color: Colors.grey, fontSize: 18),
-//           ),
-//           value: funcionarioSelecionado,
-//           // Down Arrow Icon
-//           icon: const Icon(
-//             Icons.keyboard_arrow_down,
-//             color: Colors.grey,
-//           ),
-//           style: const TextStyle(color: Colors.black),
-//           borderRadius: BorderRadius.circular(16),
-//           // dropdownColor: Colors.grey,
-//           // Array list of items
-//           items: cadastroLoja.map((UserCadastro userCadastroJson) {
-//             return DropdownMenuItem<String>(
-//               value: userCadastroJson.funcionario.toString(),
-//               child: Text('${userCadastroJson.funcionario}'),
-//               // style: TextStyle(color: Colors.white),
-//             );
-//           }).toList(),
-//
-//           onChanged: (String? idSelecionado) {
-//             setState(() {
-//               funcionarioSelecionado = idSelecionado;
-//               print(idSelecionado);
-//             });
-//           },
-//           // After selecting the desired option,it will
-//           // change button value to selected value
-//         )
-//       ],
-//     ),
-//   );
-// }
-
 }

@@ -23,8 +23,11 @@
 # Flutter/Dart/Pub related
 **/doc/api/
 **/lib/model/teste.dart
+**/lib/sheets/user_sheets.dart
+**/lib/sheets/user_sheet_cadastro.dart
 **/android/app/google-service-Info.json
 **/ios/Flutter/.last_build_id
+
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
