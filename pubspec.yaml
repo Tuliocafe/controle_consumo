@@ -32,6 +32,7 @@ dependencies:
   firebase_core: ^1.13.1
   firebase_auth: ^3.3.9
   firebase_analytics: ^9.1.2
+  provider: ^6.0.2
 
   flutter:
     sdk: flutter
@@ -74,11 +75,11 @@ flutter:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
-<<<<<<< Updated upstream
-=======
-  assets:
-    - images/pitstop.JPG
->>>>>>> Stashed changes
+
+
+assets:
+  - images/pitstop.JPG
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

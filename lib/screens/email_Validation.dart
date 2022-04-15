@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../main.dart';
 import '../service/auth_service.dart';
 import '../sheets/user_sheet_cadastro.dart';
@@ -22,35 +21,76 @@ class EmailValidation extends StatefulWidget {
     this.emailexiste = false,
   }) : super(key: key);
 
+
+
+
   @override
   _EmailValidationState createState() {
     return _EmailValidationState();
   }
-//    emailvalidation(BuildContext context) {
-//      emailexiste = false;
-//      ativo = false;
-//      for (int i = 0; i < listemail.length; i++) {
-//        // print(listemail[i].email);
-//        if ((context.read<AuthService>().usuario?.email) == listemail[i].email) {
-//          emailexiste = true;
-//          if (listemail[i].ativo == 'sim') {
-//            ativo = true;
-//            print('agora deu');
-//            return true;
-//          }
-//        }
-//      }
-//     return true;
-//   }
+
+
+
+  // emailvalidation(BuildContext context) {
+  //   //estudar: posso colocar um index atrelado ao context ?
+  //   emailexiste = false;
+  //   ativo = false;
+  //   for (int i = 0; i < listemail.length; i++) {
+  //     // print(listemail[i].email);
+  //     if ((context.read<AuthService>().usuario?.email) == listemail[i].email) {
+  //       emailexiste = true;
+  //       if (listemail[i].ativo == 'sim') {
+  //         ativo = true;
+  //         return true;
+  //       }
+  //     }
+  //   }
+  //   setState(() {
+  //     // Posso criar o initstat e colocar essas funcoes nele, preiso testar
+  //     this.ativo = ativo;
+  //     this.emailexiste = emailexiste;
+  //   });
+  // }
+  //
+  // void insertemail(value, row) async {
+  //   await UserSheetsCadastro.insertByEmail(value, row);
+  // }
+  //
+  // criatemail(email) async {
+  //   if (!emailexiste) {
+  //     await getemail();
+  //     insertemail(email, listemail.length + 2);
+  //   }
+  // }
+
+
+
+   emailvalidation(BuildContext context, listemail) {
+     emailexiste = false;
+     ativo = false;
+     for (int i = 0; i < listemail.length; i++) {
+       // print(listemail[i].email);
+       if ((context.read<AuthService>().usuario?.email) == listemail[i].email) {
+         emailexiste = true;
+         if (listemail[i].ativo == 'sim') {
+           ativo = true;
+           print('agora deu');
+           return true;
+         }
+       }
+     }
+    return true;
+  }
 }
 
 class _EmailValidationState extends State<EmailValidation> {
   bool ativo = false;
   bool emailexiste = false;
   List listemail = [];
+  // List<String>? listemail = [];
 
   getemail() async {
-    final listemail = await UserSheetsCadastro.getByemail();
+    final listemail = await UserSheetsCadastro.getusers();
 
     setState(() {
       this.listemail = listemail;

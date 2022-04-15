@@ -2,42 +2,42 @@ import 'dart:core';
 import 'package:controle_consumo/model/user.dart';
 import 'package:controle_consumo/sheets/user_sheet_cadastro.dart';
 import 'package:controle_consumo/widget/botton_widget.dart';
-<<<<<<< Updated upstream
-import 'package:flutter/cupertino.dart';
-=======
 import 'package:flutter/foundation.dart';
->>>>>>> Stashed changes
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+import '../screens/email_Validation.dart';
+import '../service/auth_service.dart';
 
 class UserFormWidget extends StatefulWidget {
   final User? user;
-<<<<<<< Updated upstream
-  final ValueChanged<User> onSavedUser;
-=======
-  final AsyncValueSetter<User> onSavedUser;
-  final ValueChanged<UserCadastro>? onSevedCadastro;
-  final bool isUser;
+  // final ValueChanged<User> onSavedUser;
+  final AsyncValueSetter<User>? onSavedUser;
+  // final ValueChanged<UserCadastro>? onSevedCadastro;
+  final EmailValidation? emailValidation;
 
-  final EmailAutorization? TesteEmailvalido;
->>>>>>> Stashed changes
 
   const UserFormWidget({
     Key? key,
     this.user,
     required this.onSavedUser,
+    this.emailValidation,
   }) : super(key: key);
 
   @override
   _UserFormWidgetState createState() => _UserFormWidgetState();
 }
 
+
 class _UserFormWidgetState extends State<UserFormWidget> {
   DateTime datenow = DateTime.now();
   List<String>? cadastroLoja = [];
   List<String>? cadastroFuncionario = [];
+  List<String>? listaemail = [];
   String? lojaSelecionada;
   String? funcionarioSelecionado;
+  bool ativo = false;
 
   final formkey = GlobalKey<FormState>();
 
@@ -79,6 +79,14 @@ class _UserFormWidgetState extends State<UserFormWidget> {
 
     setState(() {
       this.cadastroFuncionario = cadastroFuncionario;
+    });
+  }
+
+  Future getemail() async {
+    final listaemail = await UserSheetsCadastro.getByColumn(3);
+
+    setState(() {
+      this.listaemail = listaemail;
     });
   }
 
@@ -167,30 +175,30 @@ class _UserFormWidgetState extends State<UserFormWidget> {
     String dataptbr = DateFormat("dd/MM/yyyy").format(datenow);
     return ButtonWidget(
       text: 'Salvar',
-<<<<<<< Updated upstream
-      onClicked: () {
-        final form = formkey.currentState!;
-        final isValid = form.validate();
-        if (isValid) {
-          final user = User(
-            pessoa: funcionarioSelecionado,
-            item: controllerItem.text,
-            valor: controllerValor.text,
-            data: dataptbr,
-            loja: lojaSelecionada,
-          );
-          widget.onSavedUser(user);
-          controllerPessoa.clear();
-          controllerItem.clear();
-          controllerValor.clear();
-=======
+      // onClicked: () {
+      //   final form = formkey.currentState!;
+      //   final isValid = form.validate();
+      //   if (isValid) {
+      //     final user = User(
+      //       pessoa: funcionarioSelecionado,
+      //       item: controllerItem.text,
+      //       valor: controllerValor.text,
+      //       data: dataptbr,
+      //       loja: lojaSelecionada,
+      //     );
+      //     widget.onSavedUser(user);
+      //     controllerPessoa.clear();
+      //     controllerItem.clear();
+      //     controllerValor.clear();
+
       onClicked: () async {
         try {
           await getemail();
           setState(() {
             listaemail = listaemail;
           });
-          EmailAutorization validar = EmailAutorization(ativo);
+          // EmailAutorization validar = EmailAutorization(ativo);
+          EmailValidation validar = EmailValidation();
           await validar.emailvalidation(context, listaemail);
           // print('logico que deu merda');
           // print(validar.ativo);
@@ -211,7 +219,7 @@ class _UserFormWidgetState extends State<UserFormWidget> {
               );
               controllerItem.clear();
               controllerValor.clear();
-              await widget.onSavedUser(user);
+              await widget.onSavedUser!(user);
 
               final snackBar = SnackBar(
                 content: Text('Cadastrado com SUCESSO'),
@@ -237,7 +245,6 @@ class _UserFormWidgetState extends State<UserFormWidget> {
             ),
           );
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
->>>>>>> Stashed changes
         }
       },
     );
@@ -245,19 +252,17 @@ class _UserFormWidgetState extends State<UserFormWidget> {
 
   Widget buildtexte() {
     return ButtonWidget(
-<<<<<<< Updated upstream
-        text: 'Teste',
-        onClicked: () {
-          // for (int i = 0; i <= 6; i++) {
-          //   print(teste[i].loja);
-=======
-        // botao criado para testes.
-        // testando um retorno da planilha.
-        text: 'Consultar ultimo Lancamento',
+
+    // for (int i = 0; i <= 6; i++) {
+    //   print(teste[i].loja);
+    // botao criado para testes.
+    // testando um retorno da planilha.
+    text: 'Consultar ultimo Lancamento',
+
         onClicked: () async {
           final snackBar = SnackBar(
-            content: Text(
-                '${listalancada[3]}  ${listalancada[5]} R\$${listalancada[6]}'),
+            content: Text('Teste'),
+                // '${listalancada[3]}  ${listalancada[5]} R\$${listalancada[6]}'),
             action: SnackBarAction(
               label: 'Recolher',
               onPressed: () {},
@@ -298,7 +303,6 @@ class _UserFormWidgetState extends State<UserFormWidget> {
           //   insertemail(context.read<AuthService>().usuario?.email,teste1.length +2);
           //   print('nao existe');
           //   print(emailexiste);
->>>>>>> Stashed changes
           //
           // }
           // print(userCadastroJson[0].loja);
